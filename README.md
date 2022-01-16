@@ -13,10 +13,10 @@
 - Check docker is running correctly
 docker version
 - Create the docker container
-docker run -d --name gitlab-runner --restart always -v C:\gitlab-runner\config:/etc/gitlab-runner -v /var/run/docker.sock:/var/run/docker.sock gitlab/gitlab-runner:latest
+$ docker run -d --name gitlab-runner --restart always -v C:\gitlab-runner\config:/etc/gitlab-runner -v /var/run/docker.sock:/var/run/docker.sock gitlab/gitlab-runner:latest
 - Check container is running
-docker container list
+$ docker container list
 - Register the docker container with GitLab. Replace the <URL> and <TOKEN> in the command below with the values found in GitLab under your project settings -> CI/CD ->Runners -> Setup a specific runner manually.
-docker run --rm -t -i -v C:\gitlab-runner\config:/etc/gitlab-runner gitlab/gitlab-runner register --non-interactive --executor "docker" --docker-image alpine:latest --url "<URL>" --registration-token "<TOKEN>" --description "docker-runner" --run-untagged="true" --locked="false"
+$ docker run --rm -t -i -v C:\gitlab-runner\config:/etc/gitlab-runner gitlab/gitlab-runner register --non-interactive --executor "docker" --docker-image alpine:latest --url "<URL>" --registration-token "<TOKEN>" --description "docker-runner" --run-untagged="true" --locked="false"
 - In GitLab under the runners section you should see the runner listed:
 - Kick off the CI/CD pipeline and the runner should handle the build!
