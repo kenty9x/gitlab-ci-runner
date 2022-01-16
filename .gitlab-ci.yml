@@ -1,0 +1,58 @@
+# before_script: là đoạn script mặc đinh, nó sẽ chạy trước tiên, ở đây nó sẽ xác nhận private key.
+
+# script: là tất cả những lệnh mà bạn muốn gitlab runner sẽ chạy, sửa file .htaccess để đưa website về chế độ bảo dưỡng, 
+# lấy code về, copy file cấu hình database vào đúng vị trí, chạy migrate dữ liệu và mở lại website. 
+# Tóm lại là bạn muốn nó làm gì thì cứ điền câu lệnh cần làm vào đây.
+
+# only: là nhánh bạn cần deploy, ở đây tạo luôn một nhánh tên là test-server rồi, 
+# cứ cái nhánh này có thay đổi code thì job sẽ chạy.
+
+image: "ruby:2.5"
+
+before_script:
+  - apt-get update -qq && apt-get install -y -qq sqlite3 libsqlite3-dev nodejs
+  - ruby -v
+  - which ruby
+  
+build-job:
+  stage: build
+  script:
+    - echo "Hello, $GITLAB_USER_LOGIN!"
+
+test-job1:
+  stage: test
+  script:
+    - echo "This job tests something"
+
+test-job2:
+  stage: test
+  script:
+    - echo "This job tests something, but takes more time than test-job1."
+    - echo "After the echo commands complete, it runs the sleep command for 20 seconds"
+    - echo "which simulates a test that runs 20 seconds longer than test-job1"
+    - sleep 20
+
+deploy-prod:
+  stage: deploy
+  script:
+    - echo "This job deploys something from the $CI_COMMIT_BRANCH branch."
+    - git clone https://github.com/kenty9x/istio-demo
+    - cat istio-demo/bookinfo.yaml
+
+
+
+# deploy-test:
+  # before_script:
+    # - 'which ssh-agent || ( yum update -y && yum install openssh-client -y )'
+    # - eval $(ssh-agent -s)
+    # - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    # - mkdir -p ~/.ssh
+    # - chmod 700 ~/.ssh
+    # - whoami
+    # - cd /var/www/html/project_folder
+  # script:
+    # - git pull
+    # - cp app/install/.server_test_db.php app/config/database.php 
+    # - php index.php migrate
+  # only:
+    # - test-server
